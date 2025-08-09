@@ -1,0 +1,50 @@
+import java.util.*;
+public class TelecomCompany {
+    static class Edge{
+        int u,v,w,p;
+        Edge(int u, int v, int w, int p){
+            this.u = u;
+            this.v = v;
+            this.w = w;
+            this.p = p;
+        }
+    }
+    static List<Edge> result=new ArrayList<>();
+    public static void prims(List<List<int[]>> list,PriorityQueue<Edge> pq, boolean[] visited){
+        pq.offer(new Edge(-1,1,0,0));
+        int sum=0;
+        while(!pq.isEmpty()){
+            Edge temp=pq.poll();
+            if(!visited[temp.v]){
+                visited[temp.v]=true;
+                if(temp.u!=-1) result.add(temp);
+                sum+=temp.w;
+                for(int[] arr : list.get(temp.v)){
+                    if(!visited[arr[0]]) pq.offer(new Edge(temp.v,arr[0],arr[1],arr[2]));
+                }
+            }
+        }
+        System.out.println("Total Cost : "+ sum);
+    }
+
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        int V=sc.nextInt();
+        int E=sc.nextInt();
+        List<List<int[]>> list=new ArrayList<>();
+        boolean[] visited=new boolean[V+1];
+        for(int i=0;i<V+1;i++) list.add(new ArrayList<>());
+        for(int i=0;i<E;i++){
+            int u=sc.nextInt(),v=sc.nextInt(),w=sc.nextInt(),p=sc.nextInt();
+            list.get(u).add(new int[] {v,w,p});
+        }
+        PriorityQueue<Edge> pq=new PriorityQueue<>(Comparator.comparingInt(e->e.w));
+        prims(list,pq,visited);
+        result.sort(Comparator.comparingInt((Edge a) -> a.v)
+                .thenComparingInt(a -> a.p));
+        System.out.println("Edges in MST : ");
+        for(Edge e : result){
+            System.out.println(e.u+" "+e.v+" "+e.w+" "+e.p);
+        }
+    }
+}
